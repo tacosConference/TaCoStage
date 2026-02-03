@@ -10,6 +10,9 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true
     },
+    session: {
+        expiresIn: 60 * 60 * 24 // 1 day
+    },
     plugins: [
         admin({
             defaultRole: "user",

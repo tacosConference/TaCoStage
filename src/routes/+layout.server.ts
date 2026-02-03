@@ -1,7 +1,8 @@
 import type {LayoutServerLoad} from './$types';
 import {generateColor} from "$lib/util";
+import { auth } from '$lib/server/auth';
 
-export const load: LayoutServerLoad = async ({cookies}) => {
+export const load: LayoutServerLoad = async ({cookies, request}) => {
     let color = cookies.get('color');
     if (!color) {
         color = generateColor();
@@ -12,5 +13,10 @@ export const load: LayoutServerLoad = async ({cookies}) => {
             sameSite: 'lax'
         });
     }
-    return {color};
+
+    const session = await auth.api.getSession({
+        headers: request.headers
+    });
+
+    return {color, session};
 };

@@ -37,6 +37,12 @@
 		other: m.option_other?.() ?? 'Other'
 	};
 
+	const statusColors: Record<string, string> = {
+		approved: 'bg-green-100 text-green-800 border-green-200',
+		pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+		rejected: 'bg-red-100 text-red-800 border-red-200'
+	};
+
 	function formatDate(dateString: Date) {
 		const date = new Date(dateString);
 		return date.toLocaleDateString('en-US', {
@@ -98,7 +104,7 @@
 	<!-- Header -->
 	<div class="mb-8 print:mb-6">
 		<h1 class="text-4xl font-bold mb-3 print-title {accentVariants[color]}">
-			Confirmed Contributions
+			{data.session ? 'Contributions Management' : 'Confirmed Contributions'}
 		</h1>
 		<p class="text-gray-700 text-lg print:text-base">
 			TaCoS 2026 in Heidelberg
@@ -112,7 +118,9 @@
 
 	{#if data.contributions.length === 0}
 		<div class="rounded-3xl bg-white/70 backdrop-blur p-10 shadow-lg border border-white/60 text-center">
-			<p class="text-gray-600 text-lg">No confirmed contributions yet. Check back soon!</p>
+			<p class="text-gray-600 text-lg">
+				{data.session ? 'No contributions found in the database.' : 'No confirmed contributions yet. Check back soon!'}
+			</p>
 		</div>
 	{:else}
 		<!-- Statistics -->
@@ -155,8 +163,15 @@
 											by <span class="font-medium">{contribution.name}</span>
 										</p>
 									</div>
-									<div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {bgVariants[color]} {accentVariants[color]} print:border print:border-gray-400">
-										{typeLabels[contribution.type.toLowerCase()] || contribution.type}
+									<div class="flex items-center gap-2">
+										{#if data.session}
+											<div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border {statusColors[contribution.status]} no-print">
+												{contribution.status}
+											</div>
+										{/if}
+										<div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {bgVariants[color]} {accentVariants[color]} print:border print:border-gray-400">
+											{typeLabels[contribution.type.toLowerCase()] || contribution.type}
+										</div>
 									</div>
 								</div>
 
@@ -166,8 +181,44 @@
 									</p>
 								</div>
 
-								<div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 print:text-xs">
-									Submitted on {formatDate(contribution.createdAt)}
+								<div class="mt-4 pt-3 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+									<div class="text-xs text-gray-500 print:text-xs">
+										Submitted on {formatDate(contribution.createdAt)}
+									</div>
+
+									{#if data.session}
+										<div class="flex items-center gap-2 no-print">
+											{#if contribution.status !== 'approved'}
+												<form method="POST" action="?/updateStatus">
+													<input type="hidden" name="id" value={contribution.id} />
+													<input type="hidden" name="status" value="approved" />
+													<button class="px-3 py-1 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors">
+														Approve
+													</button>
+												</form>
+											{/if}
+											
+											{#if contribution.status !== 'rejected'}
+												<form method="POST" action="?/updateStatus">
+													<input type="hidden" name="id" value={contribution.id} />
+													<input type="hidden" name="status" value="rejected" />
+													<button class="px-3 py-1 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors">
+														Reject
+													</button>
+												</form>
+											{/if}
+
+											{#if contribution.status !== 'pending'}
+												<form method="POST" action="?/updateStatus">
+													<input type="hidden" name="id" value={contribution.id} />
+													<input type="hidden" name="status" value="pending" />
+													<button class="px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded-lg hover:bg-gray-700 transition-colors">
+														Set to Pending
+													</button>
+												</form>
+											{/if}
+										</div>
+									{/if}
 								</div>
 							</article>
 						{/each}

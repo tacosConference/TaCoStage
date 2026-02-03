@@ -7,6 +7,8 @@
     import * as m from '$lib/paraglide/messages.js';
     import Button from '$lib/components/Button.svelte';
     import {colorState} from "$lib/color.svelte";
+    import {authClient} from "$lib/authClient";
+    import {goto} from "$app/navigation";
 
     let {data, children} = $props();
     colorState.color = data.color;
@@ -45,6 +47,16 @@
             expires: Date.now() + 1000 * 60 * 60 * 24,
             sameSite: 'lax'
         })
+    }
+
+    async function handleLogout() {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    window.location.reload();
+                }
+            }
+        });
     }
 
     function toggleMobileMenu() {
@@ -168,6 +180,17 @@
                     </Button>
                 </nav>
             </div>
+
+            {#if data.session}
+                <div class="mt-auto pt-6 border-t border-black/10">
+                    <Button
+                            variant="secondary"
+                            onclick={handleLogout}
+                            color={color}>
+                        {m.nav_logout()}
+                    </Button>
+                </div>
+            {/if}
         </div>
     {/if}
 
@@ -199,6 +222,17 @@
                     {m.nav_about?.() ?? 'About'}
                 </Button>
             </nav>
+
+            {#if data.session}
+                <div class="mt-auto">
+                    <Button
+                            variant="secondary"
+                            onclick={handleLogout}
+                            color={color}>
+                        {m.nav_logout()}
+                    </Button>
+                </div>
+            {/if}
         </aside>
 
         <!-- Content -->
