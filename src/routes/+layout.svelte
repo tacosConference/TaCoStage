@@ -177,7 +177,7 @@
             <a class="flex flex-col items-center gap-3 mb-6" href={localizeHref('/')}
                aria-label={m.nav_home_aria()}>
                 <span class="text-2xl font-semibold {accentVariants[color]}">TaCoStage</span>
-                <img class="drop-shadow" src={getLogo(color)} alt="logo"/>
+                <img class="drop-shadow w-full h-auto aspect-square" src={getLogo(color)} alt=""/>
             </a>
             <nav class="flex flex-col gap-2">
                 <Button variant="secondary" href={localizeHref('/')} active={page.url.pathname === localizeHref('/')}

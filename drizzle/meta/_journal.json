@@ -15,6 +15,34 @@
       "when": 1768186931083,
       "tag": "0001_wonderful_norman_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770082197036,
+      "tag": "0002_lethal_boomer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770083009478,
+      "tag": "0003_uneven_skullbuster",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770083522704,
+      "tag": "0004_amazing_quasimodo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770088473011,
+      "tag": "0005_omniscient_centennial",
+      "breakpoints": true
     }
   ]
 }

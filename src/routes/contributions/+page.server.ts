@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { contributions } from '$lib/server/db/schema';
+import { contributions } from '$lib/server/db/schema/contributions';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async () => {

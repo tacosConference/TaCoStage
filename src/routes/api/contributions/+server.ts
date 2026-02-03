@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
-import { contributions } from '$lib/server/db/schema';
+import { contributions } from '$lib/server/db/schema/contributions';
 
 const MAX_TITLE_LENGTH = 200;
 const MAX_ABSTRACT_LENGTH = 2000;
