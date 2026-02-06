@@ -27,6 +27,9 @@
         <h1 class="text-4xl font-bold tracking-tight mb-4">{m.homepage_title()}</h1>
         <p class="text-lg leading-relaxed mb-6">{m.homepage_intro()}</p>
 
+        <p class="text-lg leading-relaxed mb-6">{m.homepage_intro_more()} <a class="underline {color}" href="https://linguistik.computer/2026/newsletter/cfp">{m.homepage_cfp_link()}</a>.</p>
+
+
         <div class="mt-8 grid sm:grid-cols-2 gap-4">
             <a href={localizeHref('/contribute')}
                class="block rounded-xl p-5 bg-linear-to-br {accentVariants[color]} hover:brightness-105 hover:{tacosOutline[color]} hover:outline-2 transition">
