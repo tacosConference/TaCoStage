@@ -1,19 +1,18 @@
-# This snippet is copied and modified from the GitLab Documentation
-#   * Title of the documentation page: "Use Docker to build Docker images"
+# This snippet is copied and modified from the GitLab Documentation (as of 2021-01-10, the contents of the script seem to have changed by now)
+#   * Title of the documentation page: "Building a Docker image with kaniko"
 #   * Author: (c) 2011-present GitLab B.V.
-#   * URL: https://docs.gitlab.com/ci/docker/using_docker_build/#buildah-example
+#   * URL: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html#building-a-docker-image-with-kaniko
 #   * License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
 build-docker:
-  image: quay.io/buildah/stable
-  stage: deploy
-  variables:
-    STORAGE_DRIVER: vfs
-    BUILDAH_FORMAT: docker
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-  script:
-    - buildah build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-    - buildah push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-  only:
-    - main
+    image:
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+    stage: deploy
+    before_script:
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    script:
+        - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    only:
+        - main
 # End of adapted snippet
