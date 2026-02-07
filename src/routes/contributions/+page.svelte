@@ -30,9 +30,11 @@
 		teal: 'bg-tacos-teal-4/10'
 	};
 
-	const typeLabels: Record<string, string> = {
+ const typeLabels: Record<string, string> = {
 		talk: m.option_talk?.() ?? 'Talk',
-		workshop: m.option_workshop?.() ?? 'Workshop',
+		workshop: m.option_workshop?.() ?? 'Workshop', // legacy/compat
+		workshop_30: m.option_workshop_30?.() ?? 'Workshop (30min)',
+		workshop_60: m.option_workshop_60?.() ?? 'Workshop (1h)',
 		lightning: m.option_lightning?.() ?? 'Lightning Talk',
 		other: m.option_other?.() ?? 'Other'
 	};
@@ -56,7 +58,8 @@
 	const groupedContributions = $derived(() => {
 		const groups: Record<string, typeof data.contributions> = {
 			talk: [],
-			workshop: [],
+			workshop_30: [],
+			workshop_60: [],
 			lightning: [],
 			other: []
 		};
@@ -65,6 +68,9 @@
 			const type = contribution.type.toLowerCase();
 			if (groups[type]) {
 				groups[type].push(contribution);
+			} else if (type === 'workshop') {
+				// legacy items stored as 'workshop' go to 60min by default
+				groups['workshop_60'].push(contribution);
 			} else {
 				groups.other.push(contribution);
 			}
@@ -130,7 +136,7 @@
 				<div class="text-sm text-gray-600 mt-1">Talks</div>
 			</div>
 			<div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm border border-white/60 text-center">
-				<div class="text-3xl font-bold {accentVariants[color]}">{groupedContributions().workshop.length}</div>
+				<div class="text-3xl font-bold {accentVariants[color]}">{groupedContributions().workshop_30.length + groupedContributions().workshop_60.length}</div>
 				<div class="text-sm text-gray-600 mt-1">Workshops</div>
 			</div>
 			<div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm border border-white/60 text-center">
@@ -161,6 +167,9 @@
 										</h3>
 										<p class="text-sm text-gray-600">
 											by <span class="font-medium">{contribution.name}</span>
+											{#if data.session}
+												<span class="ml-2 text-gray-500 font-normal">({contribution.email})</span>
+											{/if}
 										</p>
 									</div>
 									<div class="flex items-center gap-2">
