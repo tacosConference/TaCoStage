@@ -14,7 +14,7 @@ async function createAdmin() {
     }
 
     const secret = process.env.ADMIN_SECRET;
-    const baseUrl = process.env.BETTER_AUTH_BASE_URL || 'http://localhost:5173';
+    const baseUrl = process.env.BASE_URL || 'http://localhost:5173';
 
     if (!secret) {
         console.error("ADMIN_CREATION_SECRET is not set in .env");

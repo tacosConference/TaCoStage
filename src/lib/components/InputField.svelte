@@ -11,6 +11,7 @@
         name?: string;
         color: string;
         maxlength?: number;
+        showWordCount?: boolean;
     }
 
     let {
@@ -24,8 +25,11 @@
         rows = 6,
         name = '',
         color,
-        maxlength
+        maxlength,
+        showWordCount = false
     }: Props = $props();
+
+    let wordCount = $derived(value.trim() ? value.trim().split(/\s+/).length : 0);
 
     let focusColors: Record<string, string> = {
         blue: 'focus:border-tacos-blue-1',
@@ -51,9 +55,14 @@
                 {required}
                 maxlength={maxlength}>
         </textarea>
-        {#if maxlength}
-            <div class="text-xs text-gray-500 text-right">
-                {value.length} / {maxlength}
+        {#if maxlength || showWordCount}
+            <div class="text-xs text-gray-500 flex justify-end gap-2">
+                {#if showWordCount}
+                    <span>{wordCount} words</span>
+                {/if}
+                {#if maxlength && !showWordCount}
+                    <span>{value.length} / {maxlength}</span>
+                {/if}
             </div>
         {/if}
     {:else if type === 'select'}
@@ -81,9 +90,14 @@
                 {required}
                 maxlength={maxlength}
         />
-        {#if maxlength}
-            <div class="text-xs text-gray-500 text-right">
-                {value.length} / {maxlength}
+        {#if maxlength || showWordCount}
+            <div class="text-xs text-gray-500 flex justify-end gap-2">
+                {#if showWordCount}
+                    <span>{wordCount} words</span>
+                {/if}
+                {#if maxlength}
+                    <span>{value.length} / {maxlength}</span>
+                {/if}
             </div>
         {/if}
     {/if}

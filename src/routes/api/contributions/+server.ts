@@ -11,7 +11,7 @@ const MAX_CAPTCHA_LENGTH = 100;
 const MIN_TITLE_LENGTH = 5;
 const MIN_ABSTRACT_LENGTH = 50;
 const MIN_NAME_LENGTH = 2;
-const ALLOWED_CONTRIBUTION_TYPES = ['talk', 'workshop', 'lightning', 'other'];
+const ALLOWED_CONTRIBUTION_TYPES = ['talk', 'workshop_30', 'workshop_60', 'lightning', 'other'];
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -100,7 +100,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const captchaLower = captcha.toLowerCase().trim();
 		if (!captchaLower.includes('heidelberg')) {
 			return json(
-				{ success: false, message: 'Captcha answer is incorrect' },
+				{ success: false, message: 'Captcha answer is incorrect. Question is: Where will the TaCoS 2026 be held?' },
 				{ status: 400 }
 			);
 		}

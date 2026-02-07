@@ -6,7 +6,7 @@
 
     // Validation constants (matching server-side)
     const MAX_TITLE_LENGTH = 200;
-    const MAX_ABSTRACT_LENGTH = 2000;
+    const MAX_ABSTRACT_LENGTH = 3000;
     const MAX_NAME_LENGTH = 100;
     const MIN_TITLE_LENGTH = 5;
     const MIN_ABSTRACT_LENGTH = 50;
@@ -131,7 +131,8 @@
 
     const contributionOptions = [
         {value: 'talk', label: m.option_talk?.() ?? 'Talk'},
-        {value: 'workshop', label: m.option_workshop?.() ?? 'Workshop'},
+        {value: 'workshop_30', label: m.option_workshop_30?.() ?? 'Workshop (30min)'},
+        {value: 'workshop_60', label: m.option_workshop_60?.() ?? 'Workshop (1h)'},
         {value: 'lightning', label: m.option_lightning?.() ?? 'Lightning Talk'},
         {value: 'other', label: m.option_other?.() ?? 'Other'}
     ]
@@ -172,6 +173,7 @@
                     required
             />
 
+            <p class="text-sm text-gray-600">{m.field_contribution_abstract_description?.() ?? ''}</p>
             <InputField
                     id="abstract"
                     type="textarea"
@@ -181,6 +183,7 @@
                     bind:value={abstract}
                     rows={8}
                     maxlength={MAX_ABSTRACT_LENGTH}
+                    showWordCount={true}
                     required
             />
 
