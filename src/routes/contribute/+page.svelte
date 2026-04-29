@@ -3,6 +3,9 @@
     import Button from '$lib/components/Button.svelte'
     import InputField from '$lib/components/InputField.svelte'
     import {colorState} from "$lib/color.svelte";
+    import type { PageData } from './$types';
+
+    let { data }: { data: PageData } = $props();
 
     // Validation constants (matching server-side)
     const MAX_TITLE_LENGTH = 200;
@@ -12,12 +15,14 @@
     const MIN_ABSTRACT_LENGTH = 50;
     const MIN_NAME_LENGTH = 2;
 
-    let type = $state('');
-    let title = $state('');
-    let abstract = $state('');
-    let name = $state('');
-    let email = $state('');
+    let type = $state(data.contribution?.type ?? '');
+    let title = $state(data.contribution?.title ?? '');
+    let abstract = $state(data.contribution?.abstract ?? '');
+    let name = $state(data.contribution?.name ?? '');
+    let email = $state(data.contribution?.email ?? '');
     let captcha = $state('');
+
+    const isEditMode = $derived(!!data.contribution);
 
     let isSubmitting = $state(false);
     let showPopup = $state(false);
@@ -28,7 +33,7 @@
 
     // Client-side validation before sending to server
     function validateForm(): string | null {
-        if (!type || !title || !abstract || !name || !email || !captcha) {
+        if (!type || !title || !abstract || !name || !email || (!captcha && !isEditMode)) {
             return 'All fields are required';
         }
 
@@ -81,10 +86,14 @@
         isSubmitting = true;
 
         try {
-            const response = await fetch('/api/contributions', {
+            const url = new URL(window.location.href);
+            const id = url.searchParams.get('id');
+            const endpoint = id ? `/api/contributions?id=${id}` : '/api/contributions';
+            
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     type,
@@ -103,13 +112,15 @@
                 popupMessage = result.message || m.submit_success();
                 showPopup = true;
 
-                // Reset form on success
-                type = '';
-                title = '';
-                abstract = '';
-                name = '';
-                email = '';
-                captcha = '';
+                if (!isEditMode) {
+                    // Reset form on success (only for new submissions)
+                    type = '';
+                    title = '';
+                    abstract = '';
+                    name = '';
+                    email = '';
+                    captcha = '';
+                }
             } else {
                 popupType = 'error';
                 popupMessage = result.message || m.submit_error();
@@ -144,12 +155,29 @@
         purple: 'bg-tacos-purple-3',
         teal: 'bg-tacos-teal-3'
     };
+
+    const infoBoxVariants: Record<string, string> = {
+        blue: 'bg-tacos-blue-5 border-tacos-blue-4 text-tacos-blue-3',
+        green: 'bg-tacos-green-5 border-tacos-green-4 text-tacos-green-3',
+        pink: 'bg-tacos-pink-5 border-tacos-pink-4 text-tacos-pink-3',
+        purple: 'bg-tacos-purple-5 border-tacos-purple-4 text-tacos-purple-3',
+        teal: 'bg-tacos-teal-5 border-tacos-teal-4 text-tacos-teal-3'
+    };
 </script>
 
 <section class="max-w-3xl mx-auto">
     <div class="rounded-3xl bg-white/70 backdrop-blur p-6 md:p-10 shadow-lg border border-white/60">
-        <h1 class="text-3xl font-bold mb-2">{m.contribute_title?.() ?? 'Submit a contribution'}</h1>
-        <p class="mb-6 text-gray-700">{m.contribute_intro?.() ?? ''}</p>
+        <h1 class="text-3xl font-bold mb-2">
+            {isEditMode ? 'Edit Contribution' : (m.contribute_title?.() ?? 'Submit a contribution')}
+        </h1>
+        
+        {#if isEditMode}
+            <div class="mb-6 p-4 border {infoBoxVariants[color]} rounded-xl text-sm">
+                <strong>Edit Mode:</strong> You are currently editing an existing contribution. Changes will be saved once you click "Save Changes".
+            </div>
+        {:else}
+            <p class="mb-6 text-gray-700">{m.contribute_intro?.() ?? ''}</p>
+        {/if}
 
         <form class="grid gap-5" onsubmit={submit}>
             <InputField
@@ -208,18 +236,24 @@
                 />
             </div>
 
-            <InputField
-                    id="captcha"
-                    color={color}
-                    label={m.field_captcha()}
-                    placeholder={m.placeholder_captcha()}
-                    bind:value={captcha}
-                    required
-            />
+            {#if !isEditMode}
+                <InputField
+                        id="captcha"
+                        color={color}
+                        label={m.field_captcha()}
+                        placeholder={m.placeholder_captcha()}
+                        bind:value={captcha}
+                        required
+                />
+            {/if}
 
             <div class="pt-2">
                 <Button color={color} type="submit" variant="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : m.submit()}
+                    {#if isSubmitting}
+                        Submitting...
+                    {:else}
+                        {isEditMode ? 'Save Changes' : (m.submit() ?? 'Submit')}
+                    {/if}
                 </Button>
             </div>
         </form>

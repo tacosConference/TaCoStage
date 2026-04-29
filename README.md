@@ -33,3 +33,11 @@ You can preview the production build with `pnpm run preview`.
 This project uses a PostgreSQL database. As always, use a strong password.
 
 Generate one using `openssl rand -base64 32`.
+
+## Admin login
+
+```sh
+pnpm run db:admin <email>
+```
+
+This creates an admin user and generates a password. Login at /login to accept or reject a contribution.

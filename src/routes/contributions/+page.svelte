@@ -226,6 +226,13 @@
 													</button>
 												</form>
 											{/if}
+
+											<a 
+												href="/contribute?id={contribution.id}"
+												class="px-3 py-1 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors no-underline"
+											>
+												Edit
+											</a>
 										</div>
 									{/if}
 								</div>
